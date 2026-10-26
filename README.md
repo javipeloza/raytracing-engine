@@ -6,6 +6,12 @@ View the PDF report [here](Final%20Report.pdf).
 
 ## Table of contents
 
+- [Build and run](#build-and-run)
+  - [Get the source](#get-the-source)
+  - [macOS (Apple Silicon)](#macos-apple-silicon)
+  - [Linux (Ubuntu/Debian, x86-64)](#linux-ubuntudebian-x86-64)
+  - [Windows (x64)](#windows-x64)
+  - [View the engine](#view-the-engine)
 - [1. Members](#1-members)
 - [2. Introduction](#2-introduction)
 - [3. Standard Features](#3-standard-features)
@@ -22,6 +28,98 @@ View the PDF report [here](Final%20Report.pdf).
   - [4.1 Bloom Filter](#41-bloom-filter)
   - [4.2 Texture Filtering: Bilinear Interpolation](#42-texture-filtering-bilinear-interpolation)
 - [5. References](#5-references)
+
+## Build and run
+
+The engine is a desktop application built with CMake and a C++20 compiler. It requires OpenGL (including GLU), OpenMP, and a graphical desktop session. Third-party libraries such as GLFW, GLM, and ImGui are included in `framework/third_party`.
+
+Keep `USE_PREBUILT_INTERSECT` enabled (the default): the intersection routines in `src/intersect.cpp` are unfinished. The included prebuilt libraries target **Apple Silicon macOS (arm64)**, **Linux x86-64**, and **Windows x64**. Intel Macs and Linux ARM laptops need a compatible intersection library before they can run the ray tracer.
+
+### Get the source
+
+Install Git, then clone the repository and enter its directory:
+
+```sh
+git clone https://github.com/javipeloza/raytracing-engine.git
+cd raytracing-engine
+```
+
+Run the following build commands from that directory. Use a Release build for faster ray tracing. The commands include `CMAKE_POLICY_VERSION_MINIMUM=3.5` so newer CMake versions can configure the bundled older dependencies ([CMake documentation](https://cmake.org/cmake/help/latest/variable/CMAKE_POLICY_VERSION_MINIMUM.html)).
+
+### macOS (Apple Silicon)
+
+Install the Xcode Command Line Tools if needed:
+
+```sh
+xcode-select --install
+```
+
+Once that installation finishes, install CMake and the [OpenMP runtime](https://formulae.brew.sh/formula/libomp) using [Homebrew](https://brew.sh/):
+
+```sh
+brew install cmake libomp
+```
+
+Apple Clang needs explicit OpenMP flags and paths. Configure, build, and launch:
+
+```sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+  -DCMAKE_C_COMPILER=/usr/bin/clang \
+  -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
+  -DOpenMP_C_FLAGS="-Xpreprocessor -fopenmp" \
+  -DOpenMP_CXX_FLAGS="-Xpreprocessor -fopenmp" \
+  -DOpenMP_C_LIB_NAMES=omp \
+  -DOpenMP_CXX_LIB_NAMES=omp \
+  -DOpenMP_omp_LIBRARY="$(brew --prefix libomp)/lib/libomp.dylib" \
+  -DOpenMP_C_INCLUDE_DIR="$(brew --prefix libomp)/include" \
+  -DOpenMP_CXX_INCLUDE_DIR="$(brew --prefix libomp)/include"
+cmake --build build --config Release --parallel
+./build/FinalProject
+```
+
+Use a native arm64 terminal on an Apple Silicon Mac so the compiler architecture matches the supplied library.
+
+### Linux (Ubuntu/Debian, x86-64)
+
+Install a C++20-capable GCC toolchain, CMake, OpenGL/GLU development libraries, and the X11 dependencies used by GLFW. Zenity provides the file chooser for exporting renders.
+
+```sh
+sudo apt update
+sudo apt install build-essential cmake git libgl1-mesa-dev libglu1-mesa-dev \
+  libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev zenity
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+  -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++
+cmake --build build --config Release --parallel
+./build/FinalProject
+```
+
+GCC provides OpenMP support. Launch from a graphical desktop with working OpenGL drivers; the default Linux window backend uses X11 (or XWayland in a Wayland session).
+
+### Windows (x64)
+
+Install **Visual Studio 2022** with the **Desktop development with C++** workload and its CMake tools. From a **Developer PowerShell for VS 2022**, run:
+
+```powershell
+cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+cmake --build build --config Release --parallel
+.\build\Release\FinalProject.exe
+```
+
+MSVC supplies OpenMP support, and the Release configuration selects the included Windows x64 release intersection library.
+
+### View the engine
+
+1. The application opens a window titled **Final Project**, initially showing **SingleTriangle** in **Rasterization** mode.
+2. Choose a scene from **Scenes**, such as **Cornell Box (with mirror)** or **Monkey**.
+3. Under **Features**, enable the effects you want to inspect, such as **Shading**, **Recursive(reflections)**, and **Hard shadows**.
+4. Change **View mode** to **Ray Traced** to see the ray-traced result. Bloom and bilinear texture filtering are available under **Extra Features**.
+5. Drag with the left mouse button to rotate, the right button to pan, and the middle button to move along Z. Press **R** to shoot a debug ray toward the cursor, or **Esc** to close the window. Use **Render to file** to export an image.
+
+Keep the repository's `data/` folder in place: its absolute path is recorded during configuration. If you move the repository, configure and build again. If you change compilers, generators, or architectures, use a fresh build directory.
+
+Validation: a local macOS CMake configuration check detected the compiler and OpenGL, then stopped because OpenMP was not installed. The commands above include that dependency, but a complete build and GUI launch have not yet been verified on these platforms.
 
 ## 1. Members
 
