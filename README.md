@@ -2,7 +2,7 @@
 
 Raytracing engine developed in C++, OpenGL.
 
-Converted from the [final project report](Final%20Report.pdf).
+View the PDF report [here](Final%20Report.pdf).
 
 ## 1. Members
 
