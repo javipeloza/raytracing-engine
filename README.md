@@ -4,6 +4,25 @@ Raytracing engine developed in C++, OpenGL.
 
 View the PDF report [here](Final%20Report.pdf).
 
+## Table of contents
+
+- [1. Members](#1-members)
+- [2. Introduction](#2-introduction)
+- [3. Standard Features](#3-standard-features)
+  - [3.1 Shading](#31-shading)
+  - [3.2 Recursive Ray-Tracer](#32-recursive-ray-tracer)
+  - [3.3 Hard Shadows](#33-hard-shadows)
+  - [3.4 Area Lights](#34-area-lights)
+  - [3.5 Acceleration Data Structure](#35-acceleration-data-structure)
+    - [3.5.1 Generation](#351-generation)
+    - [3.5.2 Traversal - not implemented](#352-traversal---not-implemented)
+  - [3.6 Barycentric Coordinates for Normal Interpolation](#36-barycentric-coordinates-for-normal-interpolation)
+  - [3.7 Texture Mapping](#37-texture-mapping)
+- [4. Extra Features](#4-extra-features)
+  - [4.1 Bloom Filter](#41-bloom-filter)
+  - [4.2 Texture Filtering: Bilinear Interpolation](#42-texture-filtering-bilinear-interpolation)
+- [5. References](#5-references)
+
 ## 1. Members
 
 This is the computer graphics final project report. The (3) members of the group are omitted for privacy.
