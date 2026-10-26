@@ -6,7 +6,7 @@ View the PDF report [here](Final%20Report.pdf).
 
 ## 1. Members
 
-This is the computer graphics final project report. The members of the group are omitted for privacy.
+This is the computer graphics final project report. The (3) members of the group are omitted for privacy.
 
 ## 2. Introduction
 
